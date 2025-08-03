@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Perkalian Matematika</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icons/icon-192x192.png" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Perkalian Matematika YURA</h1>
+
+      <div class="settings-panel">
+        <h2>Pengaturan</h2>
+        <div class="setting-group">
+          <label>Rentang Perkalian:</label>
+          <div class="range-inputs">
+            <div>
+              <label for="min-range">Dari:</label>
+              <input type="number" id="min-range" min="1" max="30" value="2" />
+            </div>
+            <div>
+              <label for="max-range">Sampai:</label>
+              <input type="number" id="max-range" min="1" max="30" value="13" />
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label>Perkalian yang Dilewati:</label>
+          <div class="skip-numbers">
+            <div>
+              <input type="checkbox" id="skip-1" checked />
+              <label for="skip-1">Perkalian 1</label>
+            </div>
+            <div>
+              <input type="checkbox" id="skip-10" checked />
+              <label for="skip-10">Perkalian 10</label>
+            </div>
+            <div>
+              <input type="checkbox" id="skip-11" checked />
+              <label for="skip-11">Perkalian 11</label>
+            </div>
+            <div>
+              <input type="checkbox" id="skip-custom" />
+              <label for="skip-custom">Lainnya:</label>
+              <input
+                type="number"
+                id="custom-skip"
+                min="1"
+                max="30"
+                value="5"
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label for="question-count">Jumlah Soal:</label>
+          <input
+            type="number"
+            id="question-count"
+            min="5"
+            max="500"
+            value="100"
+          />
+        </div>
+
+        <div class="setting-group">
+          <label>Kecepatan Timer:</label>
+          <div class="timer-options">
+            <div>
+              <input
+                type="radio"
+                id="timer-fast"
+                name="timer-speed"
+                value="fast"
+              />
+              <label for="timer-fast">Cepat</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="timer-slow"
+                name="timer-speed"
+                value="slow"
+              />
+              <label for="timer-slow">Lambat</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="timer-off"
+                name="timer-speed"
+                value="off"
+                checked
+              />
+              <label for="timer-off">Non-aktif</label>
+            </div>
+          </div>
+        </div>
+
+        <button id="start-game">Mulai Game</button>
+      </div>
+
+      <div class="game-area" style="display: none">
+        <div class="score-info">
+          <div class="score">Skor: <span id="score">0</span></div>
+          <div class="question-counter">
+            Soal: <span id="current-question">1</span>/<span
+              id="total-questions"
+              >10</span
+            >
+          </div>
+          <button id="pause-game" class="control-btn">Jeda</button>
+        </div>
+
+        <div id="pause-dialog" class="dialog" style="display: none">
+          <div class="dialog-content">
+            <h3>Permainan Dijeda</h3>
+            <p>Apakah Anda ingin melanjutkan permainan atau keluar?</p>
+            <div class="dialog-buttons">
+              <button id="continue-game">Lanjutkan</button>
+              <button id="exit-game" class="exit-btn">Keluar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="question-container">
+          <div class="question" id="question">6 × 7 = ?</div>
+          <input type="text" id="answer-input" placeholder=". . ." readonly />
+
+          <div class="calculator-keypad">
+            <div class="keypad-row">
+              <button class="calc-btn" data-value="1">1</button>
+              <button class="calc-btn" data-value="2">2</button>
+              <button class="calc-btn" data-value="3">3</button>
+            </div>
+            <div class="keypad-row">
+              <button class="calc-btn" data-value="4">4</button>
+              <button class="calc-btn" data-value="5">5</button>
+              <button class="calc-btn" data-value="6">6</button>
+            </div>
+            <div class="keypad-row">
+              <button class="calc-btn" data-value="7">7</button>
+              <button class="calc-btn" data-value="8">8</button>
+              <button class="calc-btn" data-value="9">9</button>
+            </div>
+            <div class="keypad-row">
+              <button class="calc-btn clear-btn" data-action="clear">C</button>
+              <button class="calc-btn" data-value="0">0</button>
+              <button class="calc-btn backspace-btn" data-action="backspace">
+                ⌫
+              </button>
+            </div>
+          </div>
+          <button id="submit-answer">Jawab</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="timer-container">
+          <div class="timer-label">Waktu:</div>
+          <div class="timer-bar">
+            <div class="timer-progress" id="timer-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results" style="display: none">
+        <h2>Hasil Akhir</h2>
+        <div class="final-score">
+          Skor Akhir: <span id="final-score">0</span>
+        </div>
+        <div class="correct-answers">
+          Jawaban Benar: <span id="correct-count">0</span>
+        </div>
+        <div class="wrong-answers">
+          Jawaban Salah: <span id="wrong-count">0</span>
+        </div>
+
+        <div class="wrong-questions-container">
+          <h3>Soal yang Salah:</h3>
+          <ul id="wrong-questions-list"></ul>
+        </div>
+
+        <button id="play-again">Main Lagi</button>
+        <button id="back-to-settings">Kembali ke Pengaturan</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
