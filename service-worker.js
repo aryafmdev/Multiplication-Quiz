@@ -1,4 +1,4 @@
-const CACHE_NAME = 'belajar-perkalian-cache-v1';
+const CACHE_NAME = 'belajar-perkalian-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,25 +8,34 @@ const urlsToCache = [
   '/icons/icon-512x512.png'
 ];
 
-// Menginstall service worker dan men-cache file
+// Install service worker dan cache file
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache);
     })
   );
+  self.skipWaiting();
 });
 
-// Mengambil file dari cache untuk offline
+// Fetch file dari cache untuk offline
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+      // Jika ditemukan di cache, kembalikan
+      if (response) return response;
+      // Jika tidak, fetch dari network
+      return fetch(event.request).catch(() => {
+        // Fallback ke index.html untuk navigasi
+        if (event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+      });
     })
   );
 });
 
-// Aktivasi dan pembersihan cache
+// Aktivasi dan pembersihan cache lama
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -40,4 +49,5 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  self.clients.claim();
 });
